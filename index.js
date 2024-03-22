@@ -36,7 +36,7 @@ app.use("/genuid", function (rep, res) {
 });
 
 app.use("/", function (rep, res) {
-  res.sendfile("./public/index_game.html");
+  res.sendfile("./public/index.html");
 });
 
 // var io = socketIO.listen(appHttp);
