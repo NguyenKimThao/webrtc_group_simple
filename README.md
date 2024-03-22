@@ -1,154 +1,126 @@
-#include "call_model/external_api/ZNotifyHttpSession.h"
-#include "call_model/external_api/ZEkycHttpSession.h"
+# Video Call App
 
-USING_NSP_CALL_MODEL();
+<p align="center">
+  <img src="documentation/assets/banner.jpeg" width="375px" />
+</p>
 
-class Test : public ZNotifyHttpSession::Callback {
+## Overview
 
-	virtual void reponseTextToSpeech(const EkycApiResponse &response, const ZText2SpeechInfo::Ptr &textInfo) {
+This project demonstrates what a simple video meeting experience is like, built using React.
 
-	}
+| Intended use | Features                                                                                   | Tech stack            |
+| ------------ | ------------------------------------------------------------------------------------------ | --------------------- |
+| 1:1 calls    | Creating and joining a conference                                                          | React                 |
+| Group calls  | Camera, microphone, and audio output configuration                                         | Typescript/Javascript |
+| Conferencing | Full conference view with grid display of user streams                                     | HTML/CSS              |
+|              | Basic video conferencing interactions (muting, camera switching)                           |                       |
+|              | Screen sharing                                                                             |                       |
+|              | Recording                                                                                  |                       |
+|              | Background blur (available only on desktop Chrome and Edge)                                |                       |
+|              | Multi-screen share (maximum 2 instances)                                                   |                       |
+|              | Streaming to RTMP endpoints                                                                |                       |
+|              | [Music Mode](https://docs.dolby.io/communications-apis/docs/guides-music-mode)             |                       |
+|              | [Video Forwarding](https://docs.dolby.io/communications-apis/docs/guides-video-forwarding) |                       |
 
-	virtual void reponseDownloadFileAudio(const ZAudioDownloadInfo::Ptr &info) {
-		std::cout << "file:" << info->targetFileName << std::endl;
-	}
+Want to learn more? Check out the [Video Call App Project Gallery page](https://dolby.io/project-gallery/video-call-sample-apps/).
 
-};
+### Supported Browsers
 
-void onTest1() {
+The Video Call App supports the following browsers
 
-	Test test;
-	ZNotifyHttpSession s(&test);
-	ZText2SpeechInfo::Ptr info(new ZText2SpeechInfo());
-	info->audio_id = "1";
-	info->text = "Xin chào, tui là thảo.";
-	info->targetDirectory = "/root/Desktop/wav";
-	s.textToSpeech(info);
-	s.textToSpeech(info);
-	s.textToSpeech(info);
+- Chrome 100+
+- Safari 15+
+- Firefox 100+
+- Edge 100+
 
-	while (true) {
+## Run the demo directly
 
-	}
+You can deploy the Dolby.io Video Call app without needing to clone and build the app using the `Deploy to Netlify` button. You will need:
 
-}
+- A Netlify account to which you're logged into
+- Your Dolby.io App key and secret
 
-std::string getFile(std::string file) {
-	std::ifstream input(file, std::ios::binary);
+Refer to [this guide](#how-to-get-a-dolbyio-account) on how to obtain your Dolby.io tokens.
 
-	std::vector<char> buffer(std::istreambuf_iterator<char>(input), {});
-	return std::string(buffer.data(), buffer.size());
-}
+[![Deploy to Netlify from fork](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/dolbyio-samples/comms-app-react-videocall)
 
-class EkycTest : public ZEkycHttpSession::CallBack {
-public:
+## Getting Started
 
-	virtual void reponseCheckIdCard(ZEkycHttpSession* session, const EkycApiResponse &response, const ZCheckIdCardInfo::Ptr &idCardInfo) {
-		std::cout << "reponseCheckIdCard: " << response.toString() << std::endl;
-		dem = 1;
-	}
+The following steps will quickly get you started testing the Dolby.io Communications Platform.
 
-	virtual void reponseCheckLiveness(ZEkycHttpSession* session, const EkycApiResponse &response, const ZCheckLivenessInfo::Ptr &livenessInfo) {
-		std::cout << "reponseCheckLiveness: " << response.toString() << std::endl;
-		dem = 1;
-	}
+### Pre-requisites
 
-	virtual void reponseFaceQuality(ZEkycHttpSession* session, const EkycApiResponse &response, const ZCheckFaceQualityInfo::Ptr &faceImgInfo) {
-		std::cout << "reponseFaceQuality: " << response.toString() << std::endl;
-		dem = 1;
-	}
+To get started building this app you will need a Dolby.io account and access token. You will also need the following -
 
-	virtual void reponseVerifyWithIdCard(ZEkycHttpSession* session, const EkycApiResponse &response, const ZCheckFaceWithIdCardInfo::Ptr &faceInfo) {
-		std::cout << "reponseVerifyWithIdCard: " << response.toString() << std::endl;
-		dem = 1;
+- [Node v18.0.0 or higher](https://nodejs.org/en/download)
+- [NPM v8.11 or higher](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 
-	}
+### How to get a Dolby.io account
 
-	virtual void reponseVerifyWithAvatar(ZEkycHttpSession* session, const EkycApiResponse &response, const ZCheckFaceWithAvatarInfo::Ptr &faceInfo) {
-		std::cout << "reponseVerifyWithAvatar: " << response.toString() << std::endl;
-		dem = 1;
-	}
+To setup your Dolby.io account, go to [Dolby.io dashboard](https://dashboard.dolby.io) and complete the form. After confirming your email address, you will be logged in.
 
-	virtual void reponseTextToSpeech(ZEkycHttpSession* session, const EkycApiResponse &response, const ZText2SpeechInfo::Ptr &textInfo) {
-	}
-	int dem = 0;
+> If you did not receive a verification email, check your Spam or Junk email folders.
 
-};
+#### Setting up your [Dolby.io](https://dashboard.dolby.io) app
 
-void onTest() {
+To set up your app, you will need to go to the _Dashboard_. Inside the `Communications and Media` tab, click `Create app` if you do not have an existing app. ![dashboard](documentation/assets/create.png)
 
-	EkycTest test;
-	ZEkycHttpSession s(&test);
-	s.reInit();
-	std::cout << "reInit" << std::endl;
+### Repo structure
 
-	while (!s.ready()) {
-		Poco::Thread::sleep(50);
-	}
-	std::cout << "ready" << std::endl;
+- The `videocall/src/` directory contains all the front-end code for the video calling app. Within this directory
 
-	std::string cmd;
-	ZCheckIdCardInfo::Ptr idCardInfo;
-	//	cmd = getFile("/root/Documents/image/id_card.jpg");
-	//	idCardInfo.reset(new ZCheckIdCardInfo());
-	//	idCardInfo->data = (void*) cmd.data();
-	//	idCardInfo->len = cmd.length();
-	//	idCardInfo->type = ZCheckIdCardInfo::IDCARD_TYPE::ID_CARD;
-	//	idCardInfo->photo_id = "123";
-	//
-	//	s.checkIDCardIml(idCardInfo);
-	//
-	//	while (test.dem == 0) {
-	//		Poco::Thread::sleep(50);
-	//	}
-	//
-	//	cmd = getFile("/root/Documents/image/black.jpg");
-	//	idCardInfo.reset(new ZCheckIdCardInfo());
-	//	idCardInfo->data = (void*) cmd.data();
-	//	idCardInfo->len = cmd.length();
-	//	idCardInfo->type = ZCheckIdCardInfo::IDCARD_TYPE::BACK_IDCARD;
-	//	idCardInfo->photo_id = "123";
-	//	test.dem = 0;
-	//	s.checkIDCardIml(idCardInfo);
-	//	while (test.dem == 0) {
-	//		Poco::Thread::sleep(50);
-	//	}
-	//
-	//	cmd = getFile("/root/Documents/image/sefile.jpg");
-	//	idCardInfo.reset(new ZCheckIdCardInfo());
-	//	idCardInfo->data = (void*) cmd.data();
-	//	idCardInfo->len = cmd.length();
-	//	idCardInfo->type = ZCheckIdCardInfo::IDCARD_TYPE::SELFIE;
-	//	idCardInfo->photo_id = "123";
-	//	test.dem = 0;
-	//	s.checkIDCardIml(idCardInfo);
-	//	while (test.dem == 0) {
-	//		Poco::Thread::sleep(50);
-	//	}
+  - `hooks/` contains wrapper functions around our SDK for re-usable functionality.
+  - `components/` contains UI components that encapsulate and provide functionality.
+  - `utils/` provides some generic helper functions.
+  - `context/` contains the React Context for the side drawer and the main component window.
 
-	cmd = getFile("/root/Documents/image/sefile.jpg");
-	ZCheckFaceQualityInfo::Ptr QualityInfo(new ZCheckFaceQualityInfo());
-	QualityInfo->data = (void*) cmd.data();
-	QualityInfo->len = cmd.length();
-	QualityInfo->photo_id = "123";
-	test.dem = 0;
-	s.checkFaceQualityIml(QualityInfo);
-	while (test.dem == 0) {
-		Poco::Thread::sleep(50);
-	}
+- The `backend/` contains the code for the proxy server.
 
-	ZCheckLivenessInfo::Ptr LivenessInfo(new ZCheckLivenessInfo());
-	LivenessInfo->data = (void*) cmd.data();
-	LivenessInfo->len = cmd.length();
-	test.dem = 0;
-	s.checkLivenessIml(LivenessInfo);
-	while (test.dem == 0) {
-		Poco::Thread::sleep(50);
-	}
+This project is built with the [Comms UI Kit for react](https://github.com/dolbyio/comms-uikit-react) library for simplicity and re-use of standard Communications API based components.
 
-	std::cout << "done" << std::endl;
+### Setup the `.env` file
 
-	while (true) {
+Create a new file called `.env` in the `videocall` folder, and copy the contents of `.env.example` into it.
+You will need to provide the values for `KEY` and `SECRET` from your dolby.io app. To obtain your key and secret from the Dolby.io dashboard,
 
-	}
-}
+1. Go to the _Dashboard_, and click on the `API Keys` next to your application.
+   ![dashboard](documentation/assets/Dashboard.png)
+2. On the next screen, copy the `App key` and `App secret` and paste them in your `.env` file against the marked variables.
+   ![token](documentation/assets/app_keys.png)
+
+## How to run the Video Conferencing app
+
+Run the following steps after cloning the repository to run the application locally.
+
+### Install dependencies
+
+**note** : This guide is written with [Yarn](https://yarnpkg.com/) in mind.
+
+Open a terminal window in the root directory of your project folder. Install the project's dependencies using the following command.
+
+```bash
+yarn
+```
+
+### Start the app
+
+Execute the following command to run the application locally.
+
+```bash
+yarn dev
+```
+
+### Open the app in a browser
+
+After the appropriate message appears in the terminal window, open <http://localhost:3000> in the browser. The application will launch at this address. You should be able to see the welcome screen.
+
+![home](documentation/assets/home.png)
+
+### Additional configuration
+
+Please see the [additional configuration options](additional-configurations.md) guide to learn more about additional settings such as music mode.
+
+## More resources
+
+Looking for more sample apps and projects? Head to the [Project Gallery](https://dolby.io/project-gallery).
