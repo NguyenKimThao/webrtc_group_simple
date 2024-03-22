@@ -11,19 +11,11 @@ var id = 0;
 
 var WebSocketServer = require("websocket").server;
 
-// This line is from the Node.js HTTPS documentation.
-var options = {
-  key: fs.readFileSync("./cert/key.pem"),
-  cert: fs.readFileSync("./cert/cert.pem"),
-};
-
-var port = process.env.PORT || 8080;
-var fileServer = new nodeStatic.Server();
+var port = 8080;
 
 var app = express();
 app.use(express.static("public"));
 var appHttp = http.Server(app).listen(port);
-var appHttps = https.createServer(options, app).listen(8081);
 
 function getUid() {
   id = id + 1;
@@ -39,10 +31,7 @@ app.use("/", function (rep, res) {
   res.sendfile("./public/index.html");
 });
 
-// var io = socketIO.listen(appHttp);
-var io = new socketIO();
-io.attach(appHttp);
-io.attach(appHttps);
+var io = socketIO.listen(appHttp);
 
 var roomManager = {};
 var socketMenager = {};
