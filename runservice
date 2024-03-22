@@ -3,34 +3,30 @@ TAG_APP="1.0.0"
 NAME_APP="server_signal_call"
 
 printUsage() {
-	echo "Usage: ./runservice start|stop|restart|status|build|remove|help"
-	echo
-	echo " The first option is service action:"
-	echo " - start: launch the program"
-	echo " - build: launch the program with build"
-	echo " - remove: remove docker container"
-	echo " - stop: kill the program"
-	echo " - restart: kill the program first, then launch again the program"
-	echo " - status: show the program is running or stopped"
-	echo " - help: print this guide"
-	echo
+	echo " start: launch the program"
+	echo " build: launch the program with build"
+	echo " remove: remove docker container"
+	echo " stop: kill the program"
+	echo " restart: kill the program first, then launch again the program"
+	echo " status: show the program is running or stopped"
 }
 
 build_image() {
 	docker build . -t $NAME_APP:$TAG_APP
 }
 
-launchService() {
-	echo "Starting service $NAME_APP......" 
+startApp() {
     docker rm $NAME_APP
-    docker run --name $NAME_APP -p 800:8080 -p 801:8081 -d $NAME_APP:$TAG_APP
-	echo "Done start service $NAME_APP"
+    docker run --name $NAME_APP -p 8080:8080 -p 8081:8081 $NAME_APP:$TAG_APP
+	echo "Start app $NAME_APP" 
+}
+
+stopApp() {
+	echo "Stoping app $NAME_APP" 
+	docker stop $NAME_APP
 }
 
 case "$1" in
-	login)
-		docker login harbor.infra.zalo.services
-		;;
 	build)
 		build_image
 		;;
@@ -40,33 +36,16 @@ case "$1" in
 	pull)
 		pull_image
 		;;
-	up)
-		# checkPylint
-		launchService
-		;;
-	daemon)
-		launchServiceDeamon
-		checkLaunchService
-		;;
 	start)
-		launchService
+		startApp
 		;;
 	stop)
-		stopService
+		stopApp
 		;;
 	status)
-		docker ps -a | grep "ailab/$APP_NAME:" | grep --color=always $APP_NAME
-		;;
-	lint)
-		checkPylint
+		docker ps -a | grep $NAME_APP
 		;;
 	restart)
-		$ENTRY_PATH stop $APP_PROF
-		$ENTRY_PATH start $APP_PROF
-		;;
-	restart_daemon)
-		$ENTRY_PATH stop $APP_PROF
-		$ENTRY_PATH daemon $APP_PROF
 		;;
 	remove)
 		removeService
